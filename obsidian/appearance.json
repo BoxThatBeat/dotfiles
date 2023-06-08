@@ -1,0 +1,17 @@
+{
+  "cssTheme": "Catppuccin",
+  "theme": "obsidian",
+  "translucency": false,
+  "baseFontSize": 17,
+  "enabledCssSnippets": [
+    "obsidian",
+    "LargerMath",
+    "obsidian-pagebreaks",
+    "Pagebreaks"
+  ],
+  "baseFontSizeAction": false,
+  "accentColor": "#929ef7",
+  "showViewHeader": false,
+  "nativeMenus": false,
+  "monospaceFontFamily": "JetBrainsMonoNL NF"
+}

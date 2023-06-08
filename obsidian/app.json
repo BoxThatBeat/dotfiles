@@ -1,0 +1,31 @@
+{
+  "readableLineLength": false,
+  "showLineNumber": false,
+  "spellcheck": true,
+  "spellcheckLanguages": [
+    "en-CA"
+  ],
+  "attachmentFolderPath": "Repo/Attachments",
+  "newFileLocation": "folder",
+  "newFileFolderPath": "Repo",
+  "userIgnoreFilters": [
+    "Repo/Attachments/",
+    "Excalidraw/"
+  ],
+  "alwaysUpdateLinks": true,
+  "showInlineTitle": false,
+  "pdfExportSettings": {
+    "includeName": false,
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "0",
+    "downscalePercent": 100
+  },
+  "strictLineBreaks": false,
+  "showFrontmatter": false,
+  "foldIndent": false,
+  "foldHeading": false,
+  "autoPairBrackets": false,
+  "autoPairMarkdown": false,
+  "livePreview": true
+}
