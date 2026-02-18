@@ -63,6 +63,7 @@
     os_icon                 # os identifier
     dir                     # current directory
     vcs                     # git status
+    xp                      # custom rpg xp prompt
     # =========================[ Line #2 ]=========================
     newline                 # \n
     prompt_char             # prompt symbol
@@ -1725,6 +1726,41 @@
     prompt_example
   }
 
+
+  # Aaron Buitenwerf RPG xp prompt
+  function prompt_xp() {
+    local taskdata
+    taskdata=$(task _get rc.data.location 2>/dev/null)
+    [[ -z "$taskdata" ]] && taskdata="$HOME/.local/share/task"
+  
+    local lvl_file="$taskdata/rpg/data/level.dat"
+    [[ -f "$lvl_file" ]] || return
+
+    local LEVEL CUR_XP TOTAL_XP
+    read LEVEL CUR_XP TOTAL_XP < "$lvl_file"
+
+    # XP needed for next level (same formula as hook)
+    local NEXT_LVL_XP=$((50 * LEVEL))
+    [[ "$NEXT_LVL_XP" -eq 0 ]] && return
+
+    # Progress calculation
+    local width=12
+    local percent=$(( CUR_XP * 100 / NEXT_LVL_XP ))
+    local filled=$(( percent * width / 100 ))
+    local empty=$(( width - filled ))
+
+    bar=""
+    bar+="${(l:$filled::█:)}"
+    bar+="${(l:$empty::░:)}"
+
+    # Optional: color shifts as you progress
+    local color=$P10K_COLOR_GREEN
+    (( percent > 60 )) && color=$P10K_COLOR_YELLOW
+    (( percent > 85 )) && color=$P10K_COLOR_RED
+
+    p10k segment -f $color -i '⚔' -t "Lv $LEVEL $bar $CUR_XP/$NEXT_LVL_XP"
+  }
+
   # User-defined prompt segments can be customized the same way as built-in segments.
   # typeset -g POWERLEVEL9K_EXAMPLE_FOREGROUND=$P10K_COLOR_PINK
   # typeset -g POWERLEVEL9K_EXAMPLE_VISUAL_IDENTIFIER_EXPANSION='⭐'
@@ -1736,7 +1772,7 @@
   #   - always:   Trim down prompt when accepting a command line.
   #   - same-dir: Trim down prompt when accepting a command line unless this is the first command
   #               typed after changing current working directory.
-  typeset -g POWERLEVEL9K_TRANSIENT_PROMPT=off
+  typeset -g POWERLEVEL9K_TRANSIENT_PROMPT=always
 
   # Instant prompt mode.
   #

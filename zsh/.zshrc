@@ -132,3 +132,7 @@ fi
 export XDG_CONFIG_HOME="$HOME/.config"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PATH="$HOME/.local/bin:$PATH"
+
+# opencode
+export PATH=/home/developer/.opencode/bin:$PATH
