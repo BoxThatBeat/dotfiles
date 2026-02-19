@@ -5,7 +5,7 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "Monster One",
       "options": {
-        "baseURL": "https://ollama.jsisensors.ca/monster1/",
+        "baseURL": "https://ollama.jsisensors.ca/monster2/",
       },
       "models": {
         "glm-4.7-flash:bf16": {
