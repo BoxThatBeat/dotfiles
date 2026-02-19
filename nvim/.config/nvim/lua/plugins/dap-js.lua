@@ -6,40 +6,12 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
     },
-    config = function(_, opts)
-      -- Let LazyVim set up dap first (this calls the default config)
-      -- We need to replicate what LazyVim does, then add our stuff
-
+    -- Use opts function to extend without replacing LazyVim's config
+    opts = function()
       local dap = require("dap")
-
-      -- Load mason-nvim-dap if available (from LazyVim)
-      if require("lazy.core.config").plugins["mason-nvim-dap.nvim"] then
-        pcall(function()
-          require("mason-nvim-dap").setup(require("lazy.core.config").plugins["mason-nvim-dap.nvim"].opts or {})
-        end)
-      end
-
-      -- Set up highlight for stopped line (from LazyVim)
-      vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
-
-      -- Set up DAP signs with nice icons (from LazyVim)
-      local dap_icons = {
-        Stopped = { "󰁕 ", "DiagnosticWarn", "DapStoppedLine" },
-        Breakpoint = " ",
-        BreakpointCondition = " ",
-        BreakpointRejected = { " ", "DiagnosticError" },
-        LogPoint = ".>",
-      }
-      for name, sign in pairs(dap_icons) do
-        sign = type(sign) == "table" and sign or { sign }
-        vim.fn.sign_define(
-          "Dap" .. name,
-          { text = sign[1], texthl = sign[2] or "DiagnosticInfo", linehl = sign[3], numhl = sign[3] }
-        )
-      end
-
-      -- Set up JSONC support for launch.json (from LazyVim + our extension)
       local vscode = require("dap.ext.vscode")
+
+      -- Set up JSONC support for launch.json
       vscode.json_decode = function(str)
         return vim.json.decode(require("plenary.json").json_strip_comments(str))
       end
