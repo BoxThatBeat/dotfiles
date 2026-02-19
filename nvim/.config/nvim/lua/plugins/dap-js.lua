@@ -66,6 +66,17 @@ return {
         },
       }
 
+      -- Chrome adapter for Angular/browser debugging
+      dap.adapters["pwa-chrome"] = {
+        type = "server",
+        host = "localhost",
+        port = "${port}",
+        executable = {
+          command = "node",
+          args = { js_debug_path, "${port}" },
+        },
+      }
+
       local function get_workspace_folder()
         local git_root = vim.fn.systemlist("git rev-parse --show-toplevel 2>/dev/null")[1]
         if vim.v.shell_error == 0 and git_root and git_root ~= "" then
@@ -75,10 +86,42 @@ return {
       end
 
       local js_ts_configs = {
+        -- Angular/Browser debugging (ng serve)
+        {
+          type = "pwa-chrome",
+          request = "launch",
+          name = "Launch Chrome (localhost:4200)",
+          url = function()
+            return vim.fn.input("URL: ", "http://localhost:4200")
+          end,
+          webRoot = get_workspace_folder,
+          sourceMaps = true,
+          resolveSourceMapLocations = function()
+            local ws = get_workspace_folder()
+            return { ws .. "/**", "!" .. ws .. "/node_modules/**" }
+          end,
+          skipFiles = { "<node_internals>/**", "**/node_modules/**" },
+        },
+        -- Attach to Chrome via reverse SSH tunnel (chrome --remote-debugging-port=9222 on local)
+        {
+          type = "pwa-chrome",
+          request = "attach",
+          name = "Attach to Chrome (port 9222)",
+          port = 9222,
+          webRoot = get_workspace_folder,
+          sourceMaps = true,
+          timeout = 30000, -- 30s timeout for remote connections
+          resolveSourceMapLocations = function()
+            local ws = get_workspace_folder()
+            return { ws .. "/**", "!" .. ws .. "/node_modules/**" }
+          end,
+          skipFiles = { "<node_internals>/**", "**/node_modules/**" },
+        },
+        -- Node.js debugging
         {
           type = "pwa-node",
           request = "attach",
-          name = "Attach to Port (default: 9229)",
+          name = "Attach to Node Port (default: 9229)",
           port = function()
             return tonumber(vim.fn.input("Port: ", "9229"))
           end,
