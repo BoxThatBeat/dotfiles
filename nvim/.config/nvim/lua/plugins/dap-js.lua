@@ -1,10 +1,31 @@
 -- lua/plugins/dap-js.lua
 return {
+  -- Show variable values inline while debugging
+  {
+    "theHamsta/nvim-dap-virtual-text",
+    opts = {},
+  },
+
+  -- Persist breakpoints between sessions
+  {
+    "Weissle/persistent-breakpoints.nvim",
+    event = "BufReadPost", -- Load early so breakpoints are restored
+    opts = {
+      load_breakpoints_event = { "BufReadPost" },
+    },
+    keys = {
+      { "<leader>db", function() require("persistent-breakpoints.api").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
+      { "<leader>dB", function() require("persistent-breakpoints.api").set_conditional_breakpoint() end, desc = "Conditional Breakpoint" },
+      { "<leader>dx", function() require("persistent-breakpoints.api").clear_all_breakpoints() end, desc = "Clear All Breakpoints" },
+    },
+  },
+
   -- Extend nvim-dap with Node.js/TypeScript debugging support
   {
     "mfussenegger/nvim-dap",
     dependencies = {
       "nvim-lua/plenary.nvim",
+      "theHamsta/nvim-dap-virtual-text",
     },
     -- Use opts function to extend without replacing LazyVim's config
     opts = function()
@@ -52,12 +73,14 @@ return {
 
       -- Default configurations for JavaScript and TypeScript
       local js_ts_configs = {
-        -- Attach to a running Node.js process
+        -- Attach to a specific port (for apps started with --inspect)
         {
           type = "pwa-node",
           request = "attach",
-          name = "Attach to Node Process (select pid)",
-          processId = require("dap.utils").pick_process,
+          name = "Attach to Port (default: 9229)",
+          port = function()
+            return tonumber(vim.fn.input("Port: ", "9229"))
+          end,
           cwd = get_workspace_folder,
           sourceMaps = true,
           outFiles = function()
@@ -75,14 +98,12 @@ return {
           end,
           skipFiles = { "<node_internals>/**", "**/node_modules/**" },
         },
-        -- Attach to a specific port (for apps started with --inspect)
+        -- Attach to a running Node.js process
         {
           type = "pwa-node",
           request = "attach",
-          name = "Attach to Port (default: 9229)",
-          port = function()
-            return tonumber(vim.fn.input("Port: ", "9229"))
-          end,
+          name = "Attach to Node Process (select pid)",
+          processId = require("dap.utils").pick_process,
           cwd = get_workspace_folder,
           sourceMaps = true,
           outFiles = function()
