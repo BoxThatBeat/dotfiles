@@ -124,6 +124,10 @@ alias vim="nvim"
 alias vi='nvim'
 alias lg='lazygit'
 alias ai='opencode'
+alias cat='batcat'
+alias lsblk='lsblk | cat -l conf -p'
+alias ps='ps aux | cat -l conf'
+
 
 # Fix SSH agent forwarding in tmux
 if [ -n "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/ssh_auth_sock" ]; then
