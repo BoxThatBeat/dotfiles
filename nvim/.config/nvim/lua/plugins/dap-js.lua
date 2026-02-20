@@ -86,28 +86,6 @@ return {
       end
 
       local js_ts_configs = {
-        -- Angular/Browser debugging (ng serve)
-        {
-          type = "pwa-chrome",
-          request = "launch",
-          name = "Launch Chrome (localhost:4200)",
-          url = function()
-            return vim.fn.input("URL: ", "http://localhost:4200")
-          end,
-          webRoot = get_workspace_folder,
-          sourceMaps = true,
-          resolveSourceMapLocations = function()
-            local ws = get_workspace_folder()
-            return { ws .. "/**", "!" .. ws .. "/node_modules/**" }
-          end,
-          sourceMapPathOverrides = {
-            ["webpack:///src/*"] = "${webRoot}/src/*",
-            ["webpack://./src/*"] = "${webRoot}/src/*",
-            ["webpack:////*"] = "/*",
-            ["webpack://?:*/*"] = "${webRoot}/*",
-          },
-          skipFiles = { "<node_internals>/**", "**/node_modules/**" },
-        },
         -- Attach to Chrome via reverse SSH tunnel (chrome --remote-debugging-port=9222 on local)
         {
           type = "pwa-chrome",
