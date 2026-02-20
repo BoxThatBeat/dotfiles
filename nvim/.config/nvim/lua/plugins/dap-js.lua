@@ -100,6 +100,12 @@ return {
             local ws = get_workspace_folder()
             return { ws .. "/**", "!" .. ws .. "/node_modules/**" }
           end,
+          sourceMapPathOverrides = {
+            ["webpack:///src/*"] = "${webRoot}/src/*",
+            ["webpack://./src/*"] = "${webRoot}/src/*",
+            ["webpack:////*"] = "/*",
+            ["webpack://?:*/*"] = "${webRoot}/*",
+          },
           skipFiles = { "<node_internals>/**", "**/node_modules/**" },
         },
         -- Attach to Chrome via reverse SSH tunnel (chrome --remote-debugging-port=9222 on local)
@@ -111,9 +117,18 @@ return {
           webRoot = get_workspace_folder,
           sourceMaps = true,
           timeout = 30000, -- 30s timeout for remote connections
-          resolveSourceMapLocations = function()
+
+          resolveSourceMapLocations = { "**/*", "!**/node_modules/**" },
+          -- Map webpack paths to local filesystem
+          sourceMapPathOverrides = function()
             local ws = get_workspace_folder()
-            return { ws .. "/**", "!" .. ws .. "/node_modules/**" }
+            return {
+              ["webpack:///./src/*"] = ws .. "/src/*",
+              ["webpack:///src/*"] = ws .. "/src/*",
+              ["webpack:///*"] = ws .. "/*",
+              ["webpack:///./~/*"] = ws .. "/node_modules/*",
+              ["meteor://app/*"] = ws .. "/*",
+            }
           end,
           skipFiles = { "<node_internals>/**", "**/node_modules/**" },
         },
