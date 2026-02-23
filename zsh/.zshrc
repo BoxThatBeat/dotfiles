@@ -127,6 +127,7 @@ alias ai='opencode'
 alias cat='batcat'
 alias lsblk='lsblk | cat -l conf -p'
 alias ps='ps aux | cat -l conf'
+alias tw='taskwarrior-tui'
 
 
 # Fix SSH agent forwarding in tmux
