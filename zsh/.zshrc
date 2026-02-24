@@ -142,9 +142,11 @@ fi
 #CATPPUCCIN_SHOW_HOSTNAME="never"  # Optional! Options: never, always, ssh
 
 export XDG_CONFIG_HOME="$HOME/.config"
+export TASKRC=~/.config/task/taskrc
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export PATH="$HOME/.local/bin:$PATH"
 
 # opencode
 export PATH=/home/developer/.opencode/bin:$PATH
+export PATH=$HOME/.venv/bugwarrior/bin:$PATH
