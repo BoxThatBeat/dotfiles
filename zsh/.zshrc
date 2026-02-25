@@ -150,3 +150,6 @@ export PATH="$HOME/.local/bin:$PATH"
 # opencode
 export PATH=/home/developer/.opencode/bin:$PATH
 export PATH=$HOME/.venv/bugwarrior/bin:$PATH
+
+# Rust Apps
+export PATH="$HOME/.cargo/bin:$PATH"
