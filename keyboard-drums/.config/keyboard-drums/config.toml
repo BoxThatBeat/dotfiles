@@ -1,0 +1,71 @@
+#device = "/dev/input/event3"
+master_volume = 1.0
+max_voices = 32
+samples_dir = "~/.config/keyboard-drums/samples"
+
+[cycling_keys]
+next_kit = "KEY_RIGHT"
+prev_kit = "KEY_LEFT"
+next_variant = "KEY_UP"
+prev_variant = "KEY_DOWN"
+
+[[bindings]]
+key = "KEY_KP0"
+sample = "kick.wav"
+gain = 0.8
+
+[[bindings]]
+key = "KEY_KP1"
+sample = "snare.wav"
+gain = 0.9
+
+[[bindings]]
+key = "KEY_KP2"
+sample = "closed_hat.wav"
+gain = 0.8
+
+[[bindings]]
+key = "KEY_KP3"
+sample = "open_hat.wav"
+gain = 0.8
+
+[[bindings]]
+key = "KEY_KP6"
+sample = "low_tom.wav"
+gain = 0.8
+
+[[bindings]]
+key = "KEY_KP5"
+sample = "mid_tom.wav"
+gain = 0.8
+
+[[bindings]]
+key = "KEY_KP4"
+sample = "hi_tom.wav"
+gain = 0.8
+
+[[bindings]]
+key = "KEY_KPPLUS"
+sample = "cymbal.wav"
+gain = 0.8
+
+[[bindings]]
+key = "KEY_KPDOT"
+sample = "rim_shot.wav"
+gain = 0.8
+
+[[bindings]]
+key = "KEY_KP9"
+sample = "low_conga.wav"
+gain = 0.8
+
+[[bindings]]
+key = "KEY_KP8"
+sample = "mid_conga.wav"
+gain = 0.8
+
+[[bindings]]
+key = "KEY_KP7"
+sample = "hi_conga.wav"
+gain = 0.8
+
