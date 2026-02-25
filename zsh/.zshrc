@@ -123,6 +123,7 @@ alias cd="z"
 alias vim="nvim"
 alias vi='nvim'
 alias lg='lazygit'
+alias ln='lazynpm'
 alias ai='opencode'
 alias cat='batcat'
 alias lsblk='lsblk | cat -l conf -p'
@@ -153,3 +154,4 @@ export PATH=$HOME/.venv/bugwarrior/bin:$PATH
 
 # Rust Apps
 export PATH="$HOME/.cargo/bin:$PATH"
+export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
