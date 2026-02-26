@@ -132,10 +132,12 @@ alias tw='taskwarrior-tui'
 
 
 # Fix SSH agent forwarding in tmux
-if [ -n "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/ssh_auth_sock" ]; then
+# Only update the symlink if SSH_AUTH_SOCK points to a real socket (not our symlink)
+if [ -n "$SSH_AUTH_SOCK" ] && [ -S "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/ssh_auth_sock" ]; then
     ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh_auth_sock"
-    export SSH_AUTH_SOCK="$HOME/.ssh/ssh_auth_sock"
 fi
+# Always use the symlink
+export SSH_AUTH_SOCK="$HOME/.ssh/ssh_auth_sock"
 
 #ZSH_THEME="catppuccin"
 #CATPPUCCIN_FLAVOR="macchiato" # Required! Options: mocha, flappe, macchiato, latte
