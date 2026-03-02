@@ -1,71 +1,38 @@
-#device = "/dev/input/event3"
+device = "/dev/input/event2"
 master_volume = 1.0
 max_voices = 32
 samples_dir = "~/.config/keyboard-drums/samples"
 
+# KEY_MUTE
+# KEY_VOLUMEDOWN
+# KEY_VOLUMEUP
+# KEY_PREVIOUSSONG
+# KEY_PLAYPAUSE
+# KEY_NEXTSONG
+
 [cycling_keys]
-next_kit = "KEY_RIGHT"
-prev_kit = "KEY_LEFT"
-next_variant = "KEY_UP"
-prev_variant = "KEY_DOWN"
+next_kit = "KEY_PLAYPAUSE"
+#prev_kit = "KEY_LEFT"
+next_variant = "KEY_NEXTSONG"
+#prev_variant = "KEY_DOWN"
 
 [[bindings]]
-key = "KEY_SPACE"
+key = "KEY_VOLUMEDOWN"
 sample = "kick.wav"
 gain = 0.8
 
 [[bindings]]
-key = "KEY_V"
+key = "KEY_MUTE"
 sample = "snare.wav"
 gain = 0.9
 
 [[bindings]]
-key = "KEY_B"
+key = "KEY_VOLUMEUP"
 sample = "closed_hat.wav"
 gain = 0.8
 
 [[bindings]]
-key = "KEY_N"
+key = "KEY_PREVIOUSSONG"
 sample = "open_hat.wav"
-gain = 0.8
-
-[[bindings]]
-key = "KEY_J"
-sample = "low_tom.wav"
-gain = 0.8
-
-[[bindings]]
-key = "KEY_H"
-sample = "mid_tom.wav"
-gain = 0.8
-
-[[bindings]]
-key = "KEY_G"
-sample = "hi_tom.wav"
-gain = 0.8
-
-[[bindings]]
-key = "KEY_K"
-sample = "cymbal.wav"
-gain = 0.8
-
-[[bindings]]
-key = "KEY_C"
-sample = "rim_shot.wav"
-gain = 0.8
-
-[[bindings]]
-key = "KEY_I"
-sample = "low_conga.wav"
-gain = 0.8
-
-[[bindings]]
-key = "KEY_U"
-sample = "mid_conga.wav"
-gain = 0.8
-
-[[bindings]]
-key = "KEY_Y"
-sample = "hi_conga.wav"
 gain = 0.8
 
