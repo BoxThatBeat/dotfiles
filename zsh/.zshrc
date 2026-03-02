@@ -122,8 +122,8 @@ eval "$(zoxide init zsh)"
 alias cd="z"
 alias vim="nvim"
 alias vi='nvim'
-alias lg='lazygit'
-alias ln='lazynpm'
+alias lzg='lazygit'
+alias lzn='lazynpm'
 alias ai='opencode'
 alias cat='batcat'
 alias lsblk='lsblk | cat -l conf -p'
@@ -131,13 +131,58 @@ alias ps='ps aux | cat -l conf'
 alias tw='taskwarrior-tui'
 
 
-# Fix SSH agent forwarding in tmux
-# Only update the symlink if SSH_AUTH_SOCK points to a real socket (not our symlink)
-if [ -n "$SSH_AUTH_SOCK" ] && [ -S "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/ssh_auth_sock" ]; then
-    ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh_auth_sock"
-fi
-# Always use the symlink
+# SSH Agent forwarding fix for tmux + 1Password
+# This ensures a stable SSH_AUTH_SOCK path across reconnections
+
+# Function to update the SSH agent symlink
+_update_ssh_agent() {
+    # If SSH_AUTH_SOCK is set and points to a real socket (not our symlink)
+    if [ -n "$SSH_AUTH_SOCK" ] && [ -S "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/ssh_auth_sock" ]; then
+        /bin/ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh_auth_sock"
+        return 0
+    fi
+    
+    # If the symlink is broken, try to find a valid socket
+    if [ ! -S "$HOME/.ssh/ssh_auth_sock" ]; then
+        local newest_socket=$(find /tmp/ssh-* -name "agent.*" -type s -printf "%T@ %p\n" 2>/dev/null | sort -rn | head -n1 | cut -d' ' -f2)
+        if [ -n "$newest_socket" ] && [ -S "$newest_socket" ]; then
+            /bin/ln -sf "$newest_socket" "$HOME/.ssh/ssh_auth_sock"
+            return 0
+        fi
+    fi
+    return 1
+}
+
+# Update symlink on shell init
+_update_ssh_agent
+
+# Always use the stable symlink
 export SSH_AUTH_SOCK="$HOME/.ssh/ssh_auth_sock"
+
+# Manual fix command
+fixssh() {
+    if _update_ssh_agent; then
+        echo "SSH agent updated to: $(readlink $HOME/.ssh/ssh_auth_sock)"
+        ssh-add -l
+    else
+        echo "No SSH agent socket found. Are you connected via SSH with agent forwarding?"
+        return 1
+    fi
+}
+
+# Auto-fix on command not found (if it's an ssh/git command)
+command_not_found_handler() {
+    if [[ "$1" =~ ^(ssh|git) ]] && ! [ -S "$HOME/.ssh/ssh_auth_sock" ]; then
+        echo "SSH agent socket broken, attempting to fix..."
+        if _update_ssh_agent; then
+            echo "Retrying command..."
+            command "$@"
+            return $?
+        fi
+    fi
+    echo "zsh: command not found: $1" >&2
+    return 127
+}
 
 #ZSH_THEME="catppuccin"
 #CATPPUCCIN_FLAVOR="macchiato" # Required! Options: mocha, flappe, macchiato, latte
@@ -152,7 +197,11 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # opencode
 export PATH=/home/developer/.opencode/bin:$PATH
-export PATH=$HOME/.venv/bugwarrior/bin:$PATH
+# Bugwarrior aliases (avoid adding venv python to PATH)
+alias bugwarrior="$HOME/.venv/bugwarrior/bin/bugwarrior"
+alias bugwarrior-pull="$HOME/.venv/bugwarrior/bin/bugwarrior-pull"
+alias bugwarrior-uda="$HOME/.venv/bugwarrior/bin/bugwarrior-uda"
+alias bugwarrior-vault="$HOME/.venv/bugwarrior/bin/bugwarrior-vault"
 
 # Rust Apps
 export PATH="$HOME/.cargo/bin:$PATH"
