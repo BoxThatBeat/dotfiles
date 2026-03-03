@@ -123,7 +123,6 @@ alias cd="z"
 alias vim="nvim"
 alias vi='nvim'
 alias lzg='lazygit'
-alias lzn='lazynpm'
 alias ai='opencode'
 alias cat='batcat'
 alias lsblk='lsblk | cat -l conf -p'
@@ -202,6 +201,9 @@ alias bugwarrior="$HOME/.venv/bugwarrior/bin/bugwarrior"
 alias bugwarrior-pull="$HOME/.venv/bugwarrior/bin/bugwarrior-pull"
 alias bugwarrior-uda="$HOME/.venv/bugwarrior/bin/bugwarrior-uda"
 alias bugwarrior-vault="$HOME/.venv/bugwarrior/bin/bugwarrior-vault"
+
+# Custom version of lazynpm
+alias lzn='~/git/lazynpm/lazynpm'
 
 # Rust Apps
 export PATH="$HOME/.cargo/bin:$PATH"

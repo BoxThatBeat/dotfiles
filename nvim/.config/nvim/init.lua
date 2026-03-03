@@ -13,6 +13,10 @@ vim.keymap.set("n", "<X2Mouse>", "<C-i>", { desc = "Jump forward" })
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 
+-- Remap macros from q to <leader>m
+vim.keymap.set("n", "q", "<Nop>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>m", "q", { noremap = true, silent = true })
+
 -- local function set_scroll()
 -- 	vim.opt_local.scroll = math.max(1, math.floor(vim.api.nvim_win_get_height(0) / 4))
 -- end
