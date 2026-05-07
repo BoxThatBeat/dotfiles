@@ -135,6 +135,33 @@ return {
           end,
           skipFiles = { "<node_internals>/**", "**/node_modules/**" },
         },
+        -- Launch Node.js app (debugger attaches before execution starts)
+        {
+          type = "pwa-node",
+          request = "launch",
+          name = "Launch Node (./lib/src/startMain.js)",
+          program = function()
+            return get_workspace_folder() .. "/lib/src/startMain.js"
+          end,
+          runtimeArgs = { "--inspect" },
+          cwd = get_workspace_folder,
+          sourceMaps = true,
+          outFiles = function()
+            local ws = get_workspace_folder()
+            return {
+              ws .. "/lib/**/*.js",
+              ws .. "/dist/**/*.js",
+              ws .. "/build/**/*.js",
+              ws .. "/out/**/*.js",
+            }
+          end,
+          resolveSourceMapLocations = function()
+            local ws = get_workspace_folder()
+            return { ws .. "/**", "!" .. ws .. "/node_modules/**" }
+          end,
+          skipFiles = { "<node_internals>/**", "**/node_modules/**" },
+          console = "integratedTerminal",
+        },
         {
           type = "pwa-node",
           request = "attach",
