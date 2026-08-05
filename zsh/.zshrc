@@ -124,11 +124,10 @@ alias vim="nvim"
 alias vi='nvim'
 alias lzg='lazygit'
 alias ai='opencode'
-alias cat='batcat'
-alias lsblk='lsblk | cat -l conf -p'
 alias ps='ps aux | cat -l conf'
 alias tw='taskwarrior-tui'
-
+alias ac='source ~/git/algonquin-grading-tui/.venv/bin/activate && python -m grading_tui'
+unalias gsd
 
 # SSH Agent forwarding fix for tmux + 1Password
 # This ensures a stable SSH_AUTH_SOCK path across reconnections
@@ -212,5 +211,3 @@ export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
 export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-setopt NO_SHARE_HISTORY
