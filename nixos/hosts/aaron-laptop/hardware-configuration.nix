@@ -2,10 +2,12 @@
 # run `nixos-generate-config --root /mnt` and diff its output against this file —
 # if it disagrees about kernel modules, trust the generator.
 #
-# Observed layout on the Arch install (lsblk / fstab, 2026-08-22):
+# Filesystems are matched by LABEL, not UUID, so this file needs no editing
+# after you reformat — INSTALL.md creates exactly these two labels.
+#
 #   nvme0n1        238.5G
-#   ├─nvme0n1p1      1G  vfat  ->  /boot   UUID=9BAC-8D5E
-#   └─nvme0n1p2  237.5G  ext4  ->  /       UUID=2cb659a0-14db-4dd8-8d2a-1a4437e65847
+#   ├─nvme0n1p1      2G  vfat  label BOOT   ->  /boot
+#   └─nvme0n1p2  236.5G  ext4  label nixos  ->  /
 #   zram0          3.8G  swap  (generated, see modules/nixos/boot.nix)
 { config, lib, pkgs, modulesPath, ... }:
 
@@ -25,15 +27,15 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/2cb659a0-14db-4dd8-8d2a-1a4437e65847";
+    device = "/dev/disk/by-label/nixos";
     fsType = "ext4";
     options = [ "rw" "relatime" ];
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/9BAC-8D5E";
+    device = "/dev/disk/by-label/BOOT";
     fsType = "vfat";
-    options = [ "fmask=0022" "dmask=0022" ];
+    options = [ "fmask=0077" "dmask=0077" ];
   };
 
   # No swap partition — swap is zram only (matches the Arch zram-generator setup).

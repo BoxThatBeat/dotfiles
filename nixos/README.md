@@ -4,9 +4,10 @@ A flake-based NixOS configuration reverse-engineered from the running Arch
 install on this machine (HP ENVY x360 Convertible 15-bp0xx, Intel i5-7200U,
 7.6 GiB RAM, 238 GiB NVMe), captured 2026-08-22.
 
-Read **[MIGRATION.md](./MIGRATION.md)** before you install — it lists the
-handful of things that do *not* have a clean Arch→Nix mapping and the decisions
-made on your behalf.
+**[INSTALL.md](./INSTALL.md)** is the step-by-step runbook for installing this
+from a NixOS USB. **[MIGRATION.md](./MIGRATION.md)** lists the things that do
+*not* have a clean Arch→Nix mapping and the decisions made on your behalf.
+Read both before you start.
 
 ## What was carried over
 
@@ -63,42 +64,16 @@ nixos/
 
 ## Installing
 
-1. **Before you wipe Arch**, commit this repo and back up `~/.ssh`, `~/.gnupg`, `~/.local/share/nvim`, `~/.task`,
-   `~/git`, `~/Images/wallpapers`, and your Obsidian vault.
+See **[INSTALL.md](./INSTALL.md)**. The short version:
 
-2. Boot a NixOS ISO. Partition to match `hardware-configuration.nix`, or
-   repartition and update the UUIDs in that file:
-
-   ```sh
-   # If you keep the existing layout, the UUIDs already match:
-   mount /dev/disk/by-uuid/2cb659a0-14db-4dd8-8d2a-1a4437e65847 /mnt
-   mkdir -p /mnt/boot
-   mount /dev/disk/by-uuid/9BAC-8D5E /mnt/boot
-   ```
-
-3. Sanity-check the generator against the hand-written hardware file:
-
-   ```sh
-   nixos-generate-config --root /mnt --no-filesystems
-   diff /mnt/etc/nixos/hardware-configuration.nix \
-        <path-to-repo>/nixos/hosts/aaron-laptop/hardware-configuration.nix
-   ```
-   Trust the generator on `boot.initrd.availableKernelModules`.
-
-4. Set `system.stateVersion` in `hosts/aaron-laptop/default.nix` to the release
-   of the ISO you booted, then:
-
-   ```sh
-   nixos-install --flake /mnt/home/boxthatbeat/dotfiles/nixos#aaron-laptop
-   ```
-
-5. First boot: set your password (`passwd boxthatbeat`), clone this repo to
-   `~/dotfiles`, then stow your configs exactly as on Arch:
-
-   ```sh
-   cd ~/dotfiles
-   stow alacritty bat btop hypr nvim tmux waybar walker elephant task pomo keyboard-drums zsh
-   ```
+1. Push this repo, then prove it builds while Arch still works:
+   `nix build --dry-run .#nixosConfigurations.aaron-laptop.config.system.build.toplevel`
+2. Back up `/home` to an external drive — 124 GB, and this laptop has one disk.
+3. Boot the USB, get wifi up, repartition with a 2 GB ESP labelled `BOOT` and a
+   root labelled `nixos`.
+4. Clone the repo to `/mnt/home/boxthatbeat/dotfiles`, set `stateVersion`, and
+   `nixos-install --flake /mnt/home/boxthatbeat/dotfiles/nixos#aaron-laptop`.
+5. Reboot, set your password from a TTY, `stow` your dotfiles.
 
 ## Day-to-day
 
