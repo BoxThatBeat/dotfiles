@@ -193,8 +193,6 @@ export TASKRC=~/.config/task/taskrc
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export PATH="$HOME/.local/bin:$PATH"
 
-# opencode
-export PATH=/home/developer/.opencode/bin:$PATH
 # Bugwarrior aliases (avoid adding venv python to PATH)
 alias bugwarrior="$HOME/.venv/bugwarrior/bin/bugwarrior"
 alias bugwarrior-pull="$HOME/.venv/bugwarrior/bin/bugwarrior-pull"
