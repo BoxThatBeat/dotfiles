@@ -84,17 +84,39 @@ it's in `/var/lib/iwd/*.psk` (needs root).
 
 ## 0.4 Back up
 
-124 GB, so an external drive. The big items are `~/.local` (49 GB, mostly Steam)
-and `~/Videos` (44 GB) — decide whether those are worth carrying over.
+`/home` is 124 GB, but most of it is not worth copying:
+
+- **`~/.local/share/Trash` — 13 GB.** Empty it first and skip the copy entirely.
+- **`~/.local/share/Steam` — 6.7 GB.** Redownloadable.
+- **`~/.local/share/nvim` — 485 MB.** Pure cache: `mason` (which you are
+  replacing with nixpkgs LSPs anyway), `lazy` (restores exactly from the
+  tracked `lazy-lock.json`), and treesitter parsers (rebuilt on demand).
+- **`~/Videos` — 44 GB.** Your call.
+
+That gets you to roughly 60 GB. What actually matters:
 
 ```sh
+# Empty the trash first — 13 GB you would otherwise copy
+rm -rf ~/.local/share/Trash/*
+
 sudo mount /dev/sdX1 /mnt/backup
-rsync -aAXv --info=progress2 /home/boxthatbeat/ /mnt/backup/boxthatbeat/
+rsync -aAXv --info=progress2 \
+  --exclude '.local/share/Steam' \
+  --exclude '.local/share/nvim' \
+  --exclude '.local/share/Trash' \
+  --exclude '.cache' \
+  /home/boxthatbeat/ /mnt/backup/boxthatbeat/
 ```
 
-Whatever else you skip, make sure you have `~/.ssh`, `~/.gnupg`, `~/git`,
-`~/.local/share/nvim`, `~/.local/share/task`, `~/Images/wallpapers`, your
-Obsidian vault, and `~/Documents`.
+Drop `--exclude '.local/share/Steam'` if you would rather not redownload your
+library. Note there is no exclude for `.local/state` — that one you want.
+
+`~/.ssh`, `~/.gnupg`, `~/git`, `~/Documents`, `~/Images/wallpapers`, your
+Obsidian vault, `~/.local/share/task`, and — easy to miss —
+**`~/.local/state/nvim`** (488 KB). That is where Neovim 0.9+ keeps undo
+history, persistence.nvim sessions, and shada (marks, registers, jumplist,
+per-file cursor positions). None of it regenerates, unlike everything in
+`~/.local/share/nvim`.
 
 Verify the backup **before** you wipe:
 
@@ -294,8 +316,8 @@ rsync -aAXv --info=progress2 /mnt/boxthatbeat/ /home/boxthatbeat/
 ```
 
 Skip `.zshrc`, `.p10k.zsh`, and `.config/*` for anything stow now owns — restore
-data (`~/git`, `~/Documents`, `~/Images`, `~/.ssh`, `~/.gnupg`, `~/.local/share`)
-rather than config.
+data (`~/git`, `~/Documents`, `~/Images`, `~/.ssh`, `~/.gnupg`,
+`~/.local/state/nvim`, `~/.local/share/task`) rather than config.
 
 ---
 
