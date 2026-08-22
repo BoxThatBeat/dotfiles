@@ -2,9 +2,11 @@
   description = "aaron-laptop — NixOS config migrated from Arch (HP ENVY x360 15-bp0xx)";
 
   inputs = {
-    # Rolling channel, closest in spirit to Arch. Swap to nixos-25.11 for stable.
+    # Rolling channel, closest in spirit to Arch, and the only one that matches
+    # the Hyprland 0.56.2 you run today. Swap the two lines below for the
+    # current stable release; see "Which channel" in README.md for the tradeoff.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -13,17 +15,9 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-    # Walker (your launcher) ships both `walker` and its `elephant` backend
-    # from its own flake. nixpkgs packages walker alone, which is not enough
-    # for walker 2.x. Uncomment this and the two lines in
-    # modules/nixos/desktop.nix to get a working launcher with your existing
-    # ~/.config/walker and ~/.config/elephant untouched.
-    # walker.url = "github:abenz1267/walker";
-
-    # OPTIONAL but recommended: the upstream Hyprland flake tracks releases far
-    # faster than nixpkgs. Your hypr config is Lua-based, which requires
-    # Hyprland >= 0.55. If nixpkgs lags behind that, uncomment this input and
-    # follow the note in modules/nixos/desktop.nix.
+    # nixpkgs currently carries Hyprland 0.56.2, matching the Arch install, so
+    # this is not needed. Uncomment only if a future update drops nixpkgs below
+    # 0.55, which is the minimum for the Lua config format.
     # hyprland.url = "github:hyprwm/Hyprland";
   };
 

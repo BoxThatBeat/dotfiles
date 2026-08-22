@@ -2,16 +2,11 @@
 
 {
   ###########################################################################
-  # Hyprland
-  #
-  # IMPORTANT: your ~/.config/hypr is Lua (hyprland.lua + base/*.lua), which
-  # Hyprland only supports from 0.55 onward — you were on 0.56.2. If the
-  # nixpkgs `hyprland` is older than 0.55 when you build, your session will
-  # come up unconfigured. Check with:  nix eval nixpkgs#hyprland.version
-  # If it's too old, add the hyprland flake input (see flake.nix) and set:
-  #   programs.hyprland.package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-  #   programs.hyprland.portalPackage =
-  #     inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+  # Hyprland. The pinned nixpkgs gives 0.56.2 — the same version you run on
+  # Arch, so the Lua config in ~/.config/hypr loads as-is. If a future
+  # `nix flake update` ever drags this below 0.55, the Lua format stops being
+  # understood and the session comes up unconfigured; re-check with
+  # `nix eval nixpkgs#hyprland.version` after big updates.
   ###########################################################################
   programs.hyprland = {
     enable = true;
@@ -76,6 +71,11 @@
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.sddm.enableGnomeKeyring = true;
 
+  # gnome-keyring turns on gcr-ssh-agent by default, which cannot coexist with
+  # programs.ssh.startAgent. Arch used the plain ssh-agent.socket user unit and
+  # your .zshrc manages SSH_AUTH_SOCK itself, so keep that and turn gcr off.
+  services.gnome.gcr-ssh-agent.enable = false;
+
   environment.systemPackages = with pkgs; [
     # Hyprland ecosystem — matches the configs already in your dotfiles
     hyprpaper       # hyprpaper.conf -> ~/Images/wallpapers/thinkpad.png
@@ -93,16 +93,13 @@
     libnotify       # `notify-send`, used by battery-notify.sh
     swayosd         # base/autostart.lua: swayosd-server
 
-    # Launcher. `walker` autostarts as a gapplication-service and reads
-    # ~/.config/walker. Since walker 2.x the actual search backends live in a
-    # separate daemon, `elephant`, which nixpkgs does not package — walker
-    # alone will open but return no results. See MIGRATION.md for the fix
-    # (add walker's own flake, which ships both) and for alternatives.
+    # Launcher. Both are the same versions you run on Arch: walker 2.17.0 and
+    # its provider daemon elephant 2.22.0, which ships desktopapplications.so
+    # and calc.so to match your ~/.config/elephant.
     walker
+    elephant
 
-    # Guaranteed-working fallback so you are never left without a launcher on
-    # first boot. Bind it in place of walker if you go this route:
-    #   hl.bind({ mods = "SUPER", key = "SPACE", exec = "fuzzel" })
+    # Spare launcher, in case you ever want to compare. Not autostarted.
     fuzzel
 
     # Clipboard — base/bindings/clipboard.lua

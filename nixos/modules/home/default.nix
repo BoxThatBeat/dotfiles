@@ -14,7 +14,7 @@
   home.homeDirectory = "/home/boxthatbeat";
 
   # Same rule as system.stateVersion: set once, then leave alone.
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
 
   programs.home-manager.enable = true;
 }

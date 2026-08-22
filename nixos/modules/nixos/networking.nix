@@ -22,9 +22,7 @@
     enable = true;
     dnssec = "allow-downgrade";
     llmnr = "true";
-    extraConfig = ''
-      MulticastDNS=yes
-    '';
+    settings.Resolve.MulticastDNS = "yes";
   };
 
   # Direct ports of /etc/systemd/network/20-{ethernet,wlan,wwan}.network.

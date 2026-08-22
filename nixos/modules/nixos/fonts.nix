@@ -12,10 +12,10 @@
 
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji            # Arch: noto-fonts-emoji
+      noto-fonts-color-emoji      # Arch: noto-fonts-emoji (same 2.051 release)
 
       liberation_ttf              # Arch: ttf-liberation
-      gnu-free-fonts              # Arch: gnu-free-fonts
+      freefont_ttf                # Arch: gnu-free-fonts
       adwaita-fonts               # Arch: adwaita-fonts (GTK default UI font)
 
       font-awesome                # waybar icon fallback

@@ -29,6 +29,47 @@ Read both before you start.
 | Locale | `en_US.UTF-8`, `Canada/Eastern`, us/pc105+inet | ported verbatim |
 | User | `boxthatbeat` uid 1000, zsh, wheel/input/uucp/plugdev/docker | ported, plus `video`/`render`/`dialout` |
 
+## Which channel
+
+Currently **`nixos-unstable`**, which today evaluates as `26.11` "Zokor"
+pre-release. Current stable is `nixos-26.05`.
+
+Both work. Your Lua hypr config needs Hyprland >= 0.55 and stable ships 0.55.4,
+so that is not the deciding factor. What you actually trade:
+
+| | unstable (current) | stable 26.05 |
+|---|---|---|
+| Hyprland | 0.56.2 — same as your Arch | 0.55.4 |
+| walker / elephant | 2.17.0 / 2.22.0 | 2.16.2 / 2.21.0 |
+| opencode | 1.18.18 | 1.15.10 |
+| vscode | 1.133.0 | 1.119.0 |
+| `nix flake update` | can break evaluation | rarely does |
+| security fixes | as they land | backported |
+
+Staying on unstable is the recommendation: it matches the rolling model you are
+used to from Arch, and it is the only channel that gives you the exact Hyprland
+you run today, so day one is a straight port with no version delta.
+
+The usual objection to rolling — "an update breaks my machine" — mostly does not
+apply here. On Arch a bad update breaks the system you are running. On NixOS a
+bad update either fails at evaluation before anything changes (as the first
+attempt at this config did, on three renamed options) or leaves the previous
+generation in the boot menu. Updating is also an explicit act, not a
+consequence of installing something.
+
+To switch to stable, change one line in `flake.nix`:
+
+```nix
+nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+```
+
+then `nix flake update` and re-run the dry build. Nothing else in this config
+is channel-specific.
+
+`stateVersion` is set to `26.05` in `hosts/aaron-laptop/default.nix` and
+`modules/home/default.nix`. That is not the channel — it pins stateful defaults
+and should match the release you first install from, then never change.
+
 ## Layout
 
 ```
@@ -95,22 +136,25 @@ sudo nixos-rebuild switch --rollback
 `home-manager` is wired in as a NixOS module, so `nixos-rebuild switch` applies
 your user config too; there is no separate `home-manager switch` step.
 
-## Verifying attribute names first
+## Verified against real nixpkgs
 
-This config was written offline, so a few package attributes are educated
-guesses. Check them all in one go before your first install:
+This config was written offline, then checked with a full evaluation against the
+pinned nixpkgs (`nixos-unstable`, locked in `flake.lock`). It evaluates clean:
 
-```sh
-for p in walker fuzzel opencode hyprshot hypridle hyprlock hyprsunset swayosd \
-         bitwarden-desktop localsend zoom-us nsxiv musescore libreoffice-still \
-         taskwarrior-tui vtsls tailwindcss-language-server vscode-js-debug \
-         markdownlint-cli2 marksman nixd gcc-arm-embedded adwaita-fonts; do
-  nix eval --raw "nixpkgs#$p.name" 2>/dev/null && echo "  <- $p OK" || echo "MISSING: $p"
-done
-
-# Hyprland must be >= 0.55 for your Lua config to load at all:
-nix eval --raw nixpkgs#hyprland.version
+```
+these 409 derivations will be built
+these 1962 paths will be fetched (6.7 GiB download, 19.5 GiB unpacked)
 ```
 
-Anything reported MISSING is listed with a workaround in
-[MIGRATION.md](./MIGRATION.md).
+The 409 local builds are almost entirely `/etc` config files and activation
+scripts — trivial, not compilation. Nothing heavy builds from source.
+
+Every package that was a guess resolved, and several match your Arch versions
+exactly: hyprland 0.56.2, walker 2.17.0, elephant 2.22.0, localsend 1.17.0,
+spotify 1.2.92.147, zoom 7.1.5, nsxiv 34, adwaita-fonts 50.0.
+
+Re-run the check yourself any time after editing:
+
+```sh
+nix build --dry-run .#nixosConfigurations.aaron-laptop.config.system.build.toplevel
+```

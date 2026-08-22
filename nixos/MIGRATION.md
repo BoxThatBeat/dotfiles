@@ -9,7 +9,7 @@ where a decision was made for you. Read it before your first `nixos-install`.
 
 | Arch package | Status | What to do |
 |---|---|---|
-| `elephant`, `elephant-desktopapplications` (AUR) | **Not in nixpkgs.** This is walker's data-provider daemon; `base/autostart.lua` runs `elephant` before `walker --gapplication-service`. | See "Launcher options" below. |
+| `elephant`, `elephant-desktopapplications` (AUR) | **Packaged after all** — `pkgs.elephant` 2.22.0, the same version you run, including the `desktopapplications.so` and `calc.so` providers your config uses. | Nothing to do; it's installed in `desktop.nix` alongside walker 2.17.0. |
 | `ipad_charge` (AUR) | **Not in nixpkgs.** A ~200-line C program. | The udev rules are already in `modules/nixos/udev.nix` and are inert until the binary exists. Package it with a small `pkgs.stdenv.mkDerivation` pulling from `github:mkorenkov/ipad_charge`, or drop the feature. |
 | `keyboard-drums` | Your own project (config lives in `dotfiles/keyboard-drums/`). | Build it from source in a devshell, or write a derivation. The `input`-group udev rule it needs is already ported. |
 | `fstl` (AUR) | **Not in nixpkgs.** STL viewer. | `f3d` or `meshlab` are packaged and cover the same job; both handle STL. |
@@ -110,33 +110,15 @@ These were found by reading the configs and have already been fixed in the repo
 
 ---
 
-## 4b. Launcher options
+## 4b. Launcher
 
-nixpkgs packages `walker` but not `elephant`. Since walker 2.x the search
-backends live in elephant, so walker alone opens an empty window. Three ways
-out, best first:
+Resolved — no action needed. A dry build against the pinned nixpkgs gives
+`walker` 2.17.0 and `elephant` 2.22.0, both identical to your Arch versions, and
+the elephant package ships the full provider set (`desktopapplications.so`,
+`calc.so`, `bitwarden.so`, `clipboard.so`, `playerctl.so`, and others). Your
+`~/.config/walker` and `~/.config/elephant` carry over untouched.
 
-1. **Walker's own flake** — keeps your `~/.config/walker` and
-   `~/.config/elephant` working with zero config changes. Uncomment the
-   `walker.url` input in `flake.nix`, then in `modules/nixos/desktop.nix`
-   replace `walker` in `environment.systemPackages` with:
-
-   ```nix
-   inputs.walker.packages.${pkgs.system}.default
-   inputs.walker.packages.${pkgs.system}.elephant
-   ```
-
-   Confirm the real output names first: `nix flake show github:abenz1267/walker`.
-
-2. **`fuzzel`** — already installed by this config as a safety net. Native
-   Wayland, `.desktop` search, very close to walker's feel, no configuration
-   needed. Rebind in your hypr config:
-   `hl.bind({ mods = "SUPER", key = "SPACE", exec = "fuzzel" })`.
-
-3. **Others in nixpkgs**, if you want to shop around: `rofi-wayland` (most
-   featureful, plugin ecosystem), `anyrun` (Rust, plugin-based, closest in
-   spirit to walker), `tofi` (minimal, extremely fast), `wofi` (already on your
-   Arch box as a dependency; simplest, least maintained).
+`fuzzel` is also installed as a spare, but nothing autostarts it.
 
 ## 5. Deliberate additions (not present on Arch)
 
@@ -174,22 +156,16 @@ These are improvements, not ports. Remove them if you want strict parity.
 
 ---
 
-## 7. Hyprland version risk
+## 7. Hyprland version — verified
 
-Your `~/.config/hypr` was migrated to the **Lua** format (`hyprland.lua`,
-`base/*.lua`), which Hyprland only supports from **0.55**. You're on 0.56.2.
+Your `~/.config/hypr` uses the Lua format (`hyprland.lua`, `base/*.lua`), which
+requires Hyprland >= 0.55. The pinned nixpkgs gives **0.56.2**, exactly what you
+run on Arch, so the config loads as-is and no extra flake input is needed.
 
-If nixpkgs ships anything older when you build, Hyprland will start with a
-default config and none of your keybinds, monitors, or autostart will apply —
-and the failure looks like "my config vanished", not like a version error.
-
-Check first:
+Worth re-checking after a big `nix flake update`, because the failure mode is
+silent: too-old Hyprland ignores the Lua files and starts with defaults, which
+looks like your config vanished rather than like a version error.
 
 ```sh
-nix eval --raw nixpkgs#hyprland.version
+nix eval --raw .#nixosConfigurations.aaron-laptop.pkgs.hyprland.version
 ```
-
-If it's below 0.55, uncomment the `hyprland` flake input in `flake.nix` and the
-two `package`/`portalPackage` lines in `modules/nixos/desktop.nix`. The Cachix
-substituter for it is already configured in `nix.nix`, so you won't compile it
-from source.

@@ -33,7 +33,6 @@
     # nvm-installed node needs nix-ld to run. Prefer this system node and use
     # devshells per project; keep nvm only for projects that pin odd versions.
     nodejs_24
-    nodePackages.npm
     pnpm
 
     ##### Python ############################################################
@@ -60,7 +59,7 @@
     vscode-langservers-extracted  # mason: json-lsp (+ html/css/eslint)
     marksman                      # mason: marksman
     markdownlint-cli2             # mason: markdownlint-cli2
-    nodePackages.prettier         # mason: prettier
+    prettier                      # mason: prettier
     shellcheck                    # mason: shellcheck
     shfmt                         # mason: shfmt
     stylua                        # mason: stylua

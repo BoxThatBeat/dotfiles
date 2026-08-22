@@ -56,7 +56,7 @@
     exiftool            # Arch: perl-image-exiftool
     imagemagick
     ffmpeg
-    poppler_utils
+    poppler-utils
 
     ##### AI / misc CLI #####################################################
     opencode            # Arch AUR: opencode-bin  (aliased to `ai` in your zshrc)

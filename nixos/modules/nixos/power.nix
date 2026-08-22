@@ -42,6 +42,5 @@
 
   # brightnessctl was an explicit Arch package; this also installs the udev
   # rules that let a non-root `video` group member set brightness.
-  programs.light.enable = false;
   environment.systemPackages = with pkgs; [ brightnessctl powertop ];
 }

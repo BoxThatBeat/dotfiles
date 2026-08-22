@@ -46,8 +46,11 @@ prompt with no OS installed.
 ```sh
 sudo pacman -S nix
 sudo systemctl enable --now nix-daemon
-sudo usermod -aG nix-users "$USER"
-# log out and back in for the group to take effect
+
+# The Arch package's tmpfiles rules create /nix/var but NOT the store itself,
+# so this one-time init is required or you get:
+#   error: opening file "/nix/store": No such file or directory
+sudo nix-store --init
 
 mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
@@ -56,13 +59,23 @@ cd ~/dotfiles/nixos
 nix build --dry-run .#nixosConfigurations.aaron-laptop.config.system.build.toplevel
 ```
 
-`--dry-run` evaluates everything but downloads nothing, so it finishes in a
-minute or two and reports every bad attribute name at once. Fix what it flags
-(MIGRATION.md has the known-risky ones), re-run until clean, then **commit and
-push again**.
+There is no `nix-users` group on nix 2.35; the daemon socket is world-writable,
+so no group membership is needed. `nix doctor` reporting `Trusted: 0` is fine
+for a dry run — it only means custom substituters are skipped. Add yourself to
+`trusted-users` in `/etc/nix/nix.conf` if you later do a full build.
 
-If you want total certainty, drop `--dry-run` and let it build the real system
-closure — several GB of downloads, but then you know it works.
+`--dry-run` evaluates everything but downloads nothing. This has already been
+run and the config evaluates clean, ending in:
+
+```
+these 409 derivations will be built
+these 1962 paths will be fetched (6.7 GiB download, 19.5 GiB unpacked)
+```
+
+Re-run it after any edit you make. If you want total certainty, drop
+`--dry-run` and let it build the real closure — 6.7 GiB of downloads, but the
+409 local builds are trivial `/etc` files rather than compilation, so it is not
+an overnight job even on this i5.
 
 ## 0.3 Write down your wifi password
 
