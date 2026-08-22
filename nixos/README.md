@@ -110,8 +110,10 @@ See **[INSTALL.md](./INSTALL.md)**. The short version:
 1. Push this repo, then prove it builds while Arch still works:
    `nix build --dry-run .#nixosConfigurations.aaron-laptop.config.system.build.toplevel`
 2. Back up `/home` to an external drive — 124 GB, and this laptop has one disk.
-3. Boot the USB, get wifi up, repartition with a 2 GB ESP labelled `BOOT` and a
-   root labelled `nixos`.
+3. Boot the USB, get wifi up, and either **dual-boot** (shrink Arch, add a
+   partition labelled `nixos`, share the existing ESP) or **wipe** (fresh table,
+   2 GB ESP labelled `BOOT`, root labelled `nixos`). Dual-boot is recommended —
+   the dry run proves the config evaluates, not that the desktop comes up.
 4. Clone the repo to `/mnt/home/boxthatbeat/dotfiles`, set `stateVersion`, and
    `nixos-install --flake /mnt/home/boxthatbeat/dotfiles/nixos#aaron-laptop`.
 5. Reboot, set your password from a TTY, `stow` your dotfiles.
